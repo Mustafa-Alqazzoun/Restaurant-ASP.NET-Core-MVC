@@ -1,0 +1,74 @@
+﻿@model Final_Project.Models.Profile
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+<link rel="stylesheet" href="~/css/res.css">
+
+
+<div class="container mt-4">
+    <div class="profile-card shadow rounded-4 mx-auto">
+        <div class="profile-card-header">
+            <i class="fas fa-user-edit"></i> Edit Profile
+        </div>
+        <div class="profile-card-body px-4 py-3">
+            <form asp-action="Edit" asp-route-id="@Model.ProfileID" method="post" novalidate>
+                <input type="hidden" asp-for="ProfileID" />
+
+                <div class="row align-items-center mb-3">
+                    <label asp-for="Username" class="col-sm-4 col-form-label profile-label"></label>
+                    <div class="col-sm-8">
+                        <input asp-for="Username" class="form-control" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row align-items-center mb-3">
+                    <label asp-for="Gender" class="col-sm-4 col-form-label profile-label"></label>
+                    <div class="col-sm-8">
+                        <select asp-for="Gender" class="form-select">
+                            <option value="">Select Gender</option>
+                            <option value="Male" selected="@("Male" == Model.Gender)">Male</option>
+                            <option value="Female" selected="@("Female" == Model.Gender)">Female</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row align-items-center mb-3">
+                    <label class="col-sm-4 col-form-label profile-label">Customer Name</label>
+                    <div class="col-sm-8">
+                        <input name="Customer.Name" value="@Model.Customer?.Name" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row align-items-center mb-3">
+                    <label class="col-sm-4 col-form-label profile-label">Email</label>
+                    <div class="col-sm-8">
+                        <input name="Customer.Email" value="@Model.Customer?.Email" class="form-control" type="email" />
+                    </div>
+                </div>
+
+                <div class="profile-card-footer d-flex justify-content-between">
+                    <button type="submit" class="profile-btn">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.ProfileID" class="profile-btn">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="~/css/Edit.css" />
+    <link rel="stylesheet" href="~/css/profile.css" />
+
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

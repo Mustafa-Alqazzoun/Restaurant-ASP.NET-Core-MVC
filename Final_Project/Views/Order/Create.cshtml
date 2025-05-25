@@ -1,0 +1,673 @@
+﻿@model Final_Project.ViewModels.CreateOrderViewModel
+
+@{
+    ViewData["Title"] = "Create Order";
+}
+
+<style>
+    :root {
+        --soft-brown: #A0522D;
+        --soft-brown-hover: #8B4513;
+        --background-light: #fff8f0;
+        --border-light: #d6b89f;
+        --text-brown: #6B3E07;
+        --success-brown: #8B6914;
+        --warning-brown: #CD853F;
+    }
+
+    body {
+        background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1920&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        
+            z-index: -1;
+        }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--soft-brown) 0%, var(--soft-brown-hover) 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container {
+        background-color: var(--background-light);
+        border: 2px solid var(--border-light);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 16px rgba(160, 82, 45, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: 2px solid var(--border-light);
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background-color: white;
+    }
+
+        .form-control:focus {
+            border-color: var(--soft-brown);
+            box-shadow: 0 0 0 0.2rem rgba(160, 82, 45, 0.25);
+            background-color: var(--background-light);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+    .control-label {
+        font-weight: 600;
+        color: var(--text-brown);
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .btn-primary {
+        background-color: var(--soft-brown);
+        border: 2px solid var(--soft-brown);
+        color: white;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(160, 82, 45, 0.2);
+    }
+
+        .btn-primary:hover {
+            background-color: var(--soft-brown-hover);
+            border-color: var(--soft-brown-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(160, 82, 45, 0.3);
+        }
+
+    .btn-secondary {
+        background-color: var(--border-light);
+        border: 2px solid var(--border-light);
+        color: var(--text-brown);
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: var(--soft-brown);
+            border-color: var(--soft-brown);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: 2px solid #dc3545;
+        color: white;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+
+    .alert {
+        border-radius: 10px;
+        border: none;
+        padding: 15px 20px;
+        font-weight: 500;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-left: 4px solid var(--success-brown);
+    }
+
+    .card {
+        background-color: var(--background-light);
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(160, 82, 45, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(160, 82, 45, 0.15);
+        }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .order-items-section {
+        background-color: var(--background-light);
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .section-title {
+        color: var(--text-brown);
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .total-display {
+        background: linear-gradient(135deg, var(--soft-brown) 0%, var(--soft-brown-hover) 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        box-shadow: 0 4px 8px rgba(160, 82, 45, 0.2);
+    }
+
+    .badge-secondary {
+        background-color: var(--soft-brown);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+        font-weight: 500;
+    }
+
+    .text-success {
+        color: var(--success-brown) !important;
+        font-weight: 600;
+    }
+
+    .text-primary {
+        color: var(--soft-brown) !important;
+        font-weight: 600;
+    }
+
+    .form-text {
+        color: #6c757d;
+        font-size: 0.875rem;
+        font-style: italic;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+    .add-item-section {
+        background-color: white;
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    select.form-control option {
+        padding: 8px;
+    }
+
+    .required-field::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+   (max-width: 768px) {
+        .form-container
+
+    {
+        padding: 1rem;
+        margin: 1rem;
+    }
+
+    .page-header {
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+    }
+
+    }
+</style>
+
+<div class="page-header">
+    <div class="container">
+        <h2 class="mb-0">
+            <i class="fas fa-plus-circle me-2"></i>Create New Order
+        </h2>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Display validation summary for general errors -->
+    <div asp-validation-summary="All" class="alert alert-danger" style="display: none;"></div>
+
+    <!-- Custom error message container -->
+    <div id="errorMessages" class="alert alert-danger" style="display: none;">
+        <ul id="errorList"></ul>
+    </div>
+
+    <!-- Success message container -->
+    <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+
+    <div class="form-container">
+        <form asp-action="SaveNew" id="orderForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ContactNumber" class="control-label">
+                            <i class="fas fa-phone me-1"></i>Contact Number (Optional)
+                        </label>
+                        <input asp-for="ContactNumber" class="form-control" placeholder="Enter customer contact number" maxlength="20" />
+                        <span asp-validation-for="ContactNumber" class="text-danger"></span>
+                        <small class="form-text text-muted">Enter contact number to link order to existing customer</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="BranchID" class="control-label required-field">
+                            <i class="fas fa-map-marker-alt me-1"></i>Branch
+                        </label>
+                        <select asp-for="BranchID" class="form-control" asp-items="ViewBag.BranchID" required>
+                            <option value="">Select Branch</option>
+                        </select>
+                        <span asp-validation-for="BranchID" class="text-danger"></span>
+                        <div class="invalid-feedback">Please select a branch.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="TableID" class="control-label">
+                            <i class="fas fa-chair me-1"></i>Table Number (Optional)
+                        </label>
+                        <input asp-for="TableID" class="form-control" type="number" min="1" max="100" placeholder="Enter table number" />
+                        <span asp-validation-for="TableID" class="text-danger"></span>
+                        <div class="invalid-feedback">Please enter a valid table number (1-100).</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PaymentMethod" class="control-label required-field">
+                            <i class="fas fa-credit-card me-1"></i>Payment Method
+                        </label>
+                        <select asp-for="PaymentMethod" class="form-control" required>
+                            <option value="">Select Payment Method</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Digital Wallet">Digital Wallet</option>
+                        </select>
+                        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                        <div class="invalid-feedback">Please select a payment method.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-items-section">
+                <h4 class="section-title">
+                    <i class="fas fa-utensils"></i>Order Items <span class="text-danger">*</span>
+                </h4>
+                <div id="orderItems">
+                    <!-- Order items will be added here -->
+                </div>
+                <div id="orderItemsError" class="text-danger" style="display: none;">
+                    Please add at least one item to your order.
+                </div>
+
+                <div class="add-item-section">
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="foodItemSelect" class="control-label">
+                                    <i class="fas fa-hamburger me-1"></i>Select Food Item
+                                </label>
+                                <select id="foodItemSelect" class="form-control">
+                                    <option value="">Select Food Item</option>
+                                    @foreach (var item in Model.AvailableFoodItems)
+                                    {
+                                        <option value="@item.FoodItemID" data-price="@item.Price" data-name="@item.Name">
+                                            @item.Name - $@item.Price
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="quantityInput" class="control-label">
+                                <i class="fas fa-sort-numeric-up me-1"></i>Quantity
+                            </label>
+                            <input type="number" id="quantityInput" class="form-control" value="1" min="1" max="50" />
+                            <div class="invalid-feedback">Quantity must be between 1 and 50.</div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>&nbsp;</label>
+                            <button type="button" id="addItemBtn" class="btn btn-secondary form-control">
+                                <i class="fas fa-plus me-1"></i>Add Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="total-display">
+                        <i class="fas fa-calculator me-2"></i>Total Amount: <span id="totalAmount">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                    <i class="fas fa-shopping-cart me-2"></i>Create Order
+                </button>
+                <a asp-action="Menu" class="btn btn-secondary btn-lg ml-2">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Menu
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            let itemCounter = 0;
+            let totalAmount = 0;
+
+            // Hide validation summary initially
+            $('.validation-summary-valid').hide();
+
+            // Form validation function
+            function validateForm() {
+                let isValid = true;
+                let errors = [];
+
+                // Clear previous errors
+                $('.is-invalid').removeClass('is-invalid');
+                $('#errorMessages').hide();
+                $('#errorList').empty();
+                $('#orderItemsError').hide();
+
+                // Validate branch selection
+                if ($('#BranchID').val() === '') {
+                    $('#BranchID').addClass('is-invalid');
+                    errors.push('Please select a branch.');
+                    isValid = false;
+                }
+
+                // Validate payment method
+                if ($('#PaymentMethod').val() === '') {
+                    $('#PaymentMethod').addClass('is-invalid');
+                    errors.push('Please select a payment method.');
+                    isValid = false;
+                }
+
+                // Validate table number if provided
+                const tableId = $('#TableID').val();
+                if (tableId && (tableId < 1 || tableId > 100)) {
+                    $('#TableID').addClass('is-invalid');
+                    errors.push('Table number must be between 1 and 100.');
+                    isValid = false;
+                }
+
+                // Validate contact number format if provided
+                const contactNumber = $('#ContactNumber').val();
+                if (contactNumber && !/^\d{10,20}$/.test(contactNumber.replace(/[\s\-\(\)]/g, ''))) {
+                    $('#ContactNumber').addClass('is-invalid');
+                    errors.push('Contact number must be 10-20 digits.');
+                    isValid = false;
+                }
+
+                // Validate order items
+                if ($('#orderItems .order-item').length === 0) {
+                    $('#orderItemsError').show();
+                    errors.push('Please add at least one item to your order.');
+                    isValid = false;
+                }
+
+                // Display errors if any
+                if (errors.length > 0) {
+                    errors.forEach(error => {
+                        $('#errorList').append(`<li>${error}</li>`);
+                    });
+                    $('#errorMessages').show();
+                    $('html, body').animate({
+                        scrollTop: $('#errorMessages').offset().top - 100
+                    }, 500);
+                }
+
+                return isValid;
+            }
+
+            // Add item validation
+            function validateAddItem() {
+                const foodItemId = $("#foodItemSelect").val();
+                const quantity = parseInt($("#quantityInput").val());
+                let errors = [];
+
+                if (!foodItemId) {
+                    errors.push('Please select a food item.');
+                }
+
+                if (!quantity || quantity < 1 || quantity > 50) {
+                    $('#quantityInput').addClass('is-invalid');
+                    errors.push('Quantity must be between 1 and 50.');
+                } else {
+                    $('#quantityInput').removeClass('is-invalid');
+                }
+
+                // Check for duplicate items
+                const existingItems = $('#orderItems input[name*="FoodItemID"]');
+                let isDuplicate = false;
+                existingItems.each(function() {
+                    if ($(this).val() == foodItemId) {
+                        isDuplicate = true;
+                        errors.push('This item is already in your order. Please remove it first if you want to change the quantity.');
+                    }
+                });
+
+                if (errors.length > 0) {
+                    showTempError(errors.join(' '));
+                    return false;
+                }
+
+                return true;
+            }
+
+            // Show temporary error message
+            function showTempError(message) {
+                $('#errorList').html(`<li>${message}</li>`);
+                $('#errorMessages').show();
+                setTimeout(() => {
+                    $('#errorMessages').fadeOut();
+                }, 3000);
+            }
+
+            // Show success message
+            function showSuccess(message) {
+                $('#successMessage').html(message).show();
+                setTimeout(() => {
+                    $('#successMessage').fadeOut();
+                }, 3000);
+            }
+
+            // Add item to order
+            $("#addItemBtn").click(function() {
+                if (!validateAddItem()) {
+                    return;
+                }
+
+                const foodItemId = $("#foodItemSelect").val();
+                const foodItemName = $("#foodItemSelect option:selected").data("name");
+                const price = parseFloat($("#foodItemSelect option:selected").data("price"));
+                const quantity = parseInt($("#quantityInput").val());
+                const itemTotal = price * quantity;
+
+                totalAmount += itemTotal;
+
+                // Add item to the order items div
+                $("#orderItems").append(`
+                    <div class="card mb-2 order-item" data-item-total="${itemTotal}">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <input type="hidden" name="OrderItems[${itemCounter}].FoodItemID" value="${foodItemId}" />
+                                    <input type="hidden" name="OrderItems[${itemCounter}].Name" value="${foodItemName}" />
+                                    <input type="hidden" name="OrderItems[${itemCounter}].Price" value="${price}" />
+                                    <input type="hidden" name="OrderItems[${itemCounter}].Quantity" value="${quantity}" />
+                                    <strong>${foodItemName}</strong>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="text-muted">$${price.toFixed(2)} each</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="badge badge-secondary">Qty: ${quantity}</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="font-weight-bold text-success">$${itemTotal.toFixed(2)}</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-sm btn-danger remove-item" title="Remove item">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+
+                itemCounter++;
+                updateTotal();
+                $('#orderItemsError').hide();
+
+                // Reset selections
+                $("#foodItemSelect").val("");
+                $("#quantityInput").val(1);
+
+                showSuccess(`${foodItemName} added to your order!`);
+            });
+
+            // Remove item from order
+            $(document).on("click", ".remove-item", function() {
+                const itemTotal = parseFloat($(this).closest(".order-item").data("item-total"));
+                const itemName = $(this).closest(".order-item").find('strong').text();
+
+                totalAmount -= itemTotal;
+                $(this).closest(".order-item").remove();
+                updateTotal();
+
+                showSuccess(`${itemName} removed from your order.`);
+
+                // Reindex the form elements
+                reindexOrderItems();
+            });
+
+            // Reindex order items after removal
+            function reindexOrderItems() {
+                $('#orderItems .order-item').each(function(index) {
+                    $(this).find('input[name*="OrderItems["]').each(function() {
+                        const name = $(this).attr('name');
+                        const newName = name.replace(/OrderItems\[\d+\]/, `OrderItems[${index}]`);
+                        $(this).attr('name', newName);
+                    });
+                });
+                itemCounter = $('#orderItems .order-item').length;
+            }
+
+            // Update total amount
+            function updateTotal() {
+                $("#totalAmount").text("$" + totalAmount.toFixed(2));
+            }
+
+            // Form submission validation
+            $('#orderForm').submit(function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Show loading state
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Creating Order...');
+            });
+
+            // Real-time validation
+            $('#BranchID, #PaymentMethod').change(function() {
+                $(this).removeClass('is-invalid');
+            });
+
+            $('#TableID').on('input', function() {
+                const value = parseInt($(this).val());
+                if (value && (value < 1 || value > 100)) {
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
+            $('#ContactNumber').on('input', function() {
+                const value = $(this).val();
+                if (value && !/^\d{10,20}$/.test(value.replace(/[\s\-\(\)]/g, ''))) {
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
+            // Enable enter key for adding items
+            $('#quantityInput').keypress(function(e) {
+                if (e.which === 13) {
+                    $('#addItemBtn').click();
+                    e.preventDefault();
+                }
+            });
+
+            $('#foodItemSelect').keypress(function(e) {
+                if (e.which === 13) {
+                    $('#addItemBtn').click();
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+}

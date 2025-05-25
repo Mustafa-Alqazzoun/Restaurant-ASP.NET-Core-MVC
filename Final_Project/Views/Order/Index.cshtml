@@ -1,0 +1,43 @@
+﻿@model List<Final_Project.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h2>Orders</h2>
+
+<p>
+    <a asp-action="Menu" class="btn btn-primary">View Menu</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Branch</th>
+            <th>Order Time</th>
+            <th>Status</th>
+            <th>Total Amount</th>
+            <th>Payment Method</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.OrderID</td>
+                <td>@(item.Customer?.Name ?? "N/A")</td>
+                <td>@(item.Branch?.Name ?? "N/A")</td>
+                <td>@item.OrderTime.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@item.Status</td>
+                <td>$@item.TotalAmount</td>
+                <td>@item.PaymentMethod</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.OrderID">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

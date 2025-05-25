@@ -1,0 +1,73 @@
+﻿body {
+    background-color: #f6f0e8; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.profile-card {
+    background: #fff;
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 6px 18px rgba(140, 98, 57, 0.2);
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.profile-photo {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #d2b48c;
+    margin-bottom: 1rem;
+}
+
+.btn-custom {
+    background-color: #a47148;
+    border-color: #a47148;
+    color: #fff;
+    border-radius: 30px;
+    padding: 0.4rem 1.2rem;
+}
+
+    .btn-custom:hover {
+        background-color: #8b5e3c;
+        border-color: #8b5e3c;
+    }
+
+.section-card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 14px rgba(140, 98, 57, 0.15);
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    background-color: #fff3e6;
+    border-bottom: 1px solid #d2b48c;
+    padding: 1rem 1.5rem;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+.section-body {
+    padding: 1.5rem;
+}
+
+.badge.bg-success {
+    background-color: #7d9c59 !important;
+}
+
+.badge.bg-warning {
+    background-color: #d9b382 !important;
+    color: #5a4533 !important;
+}
+
+.badge.bg-secondary {
+    background-color: #b19b8b !important;
+}
+
+table th, table td {
+    vertical-align: middle;
+}
+

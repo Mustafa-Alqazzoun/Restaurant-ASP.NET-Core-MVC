@@ -1,0 +1,405 @@
+﻿@model Final_Project.ViewModels.OrderFormViewModel
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Header -->
+<header class="bg-[#A0522D] text-white py-4 shadow-lg sticky top-0 z-30 transition-transform duration-300" style="font-family: Poppins, sans-serif;" id="site-header">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Seers Restaurant</h1>
+        <div class="flex flex-col items-end">
+            <span class="text-sm font-medium">Welcome @Model.Customer.Name, to create your favorite salad</span>
+        </div>
+        <nav class="space-x-6">
+            <a href="/" class="hover:text-[#8B4513] transition-colors">Home</a>
+            <a href="/menu" class="hover:text-[#8B4513] transition-colors">Menu</a>
+            <a href="/contact" class="hover:text-[#8B4513] transition-colors">Contact</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-8 max-w-6xl pt-16 min-h-screen" style="font-family: Poppins, sans-serif;">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Create Your Custom Plate</h2>
+
+    <!-- Display Validation Errors -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="bg-[#fff8f0] border border-[#d6b89f] text-[#A0522D] px-4 py-3 rounded-lg relative mb-6 flex items-center" role="alert" id="error-alert">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <ul class="flex-1">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+            <button type="button" onclick="this.parentElement.classList.add('hidden')" class="ml-4 text-[#A0522D] hover:text-[#8B4513]">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    }
+
+    <form asp-action="Create" asp-controller="CustomizeOrder" method="post" class="bg-[#fff8f0] shadow-lg rounded-lg p-6 border border-[#d6b89f]" id="order-form">
+        <div class="mb-6">
+            <label class="block text-lg font-medium text-gray-700 mb-2">Customer: @Model.Customer.Name</label>
+            <input type="hidden" asp-for="Customer.CustomerID" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Ingredients Selection -->
+            <div class="bg-[#fff8f0] p-6 rounded-lg border border-[#d6b89f]">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Select Your Ingredients</h3>
+                <div class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                    @foreach (var unit in Model.AvailableUnits)
+                    {
+                        <div class="flex items-center p-3 bg-white rounded-md shadow-sm hover:shadow-lg transition-shadow border border-[#d6b89f] hover:scale-105 transition-transform">
+                            <div class="flex items-center mr-3">
+                                <button type="button" onclick="decrementQuantity('@unit.Id')" class="bg-[#A0522D] text-white w-8 h-8 rounded-l-md hover:bg-[#8B4513] transition-colors" aria-label="Decrease quantity of @unit.Name">
+                                    <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                    </svg>
+                                </button>
+                                <input type="number"
+                                       name="SelectedUnitQuantities[@unit.Id]"
+                                       id="unit-@unit.Id"
+                                       min="0"
+                                       max="5"
+                                       value="0"
+                                       data-name="@unit.Name"
+                                       data-price="@unit.Price"
+                                       data-image="@(unit.ImageUrl ?? "/images/default-ingredient.png")"
+                                       onchange="updatePlate()"
+                                       class="h-8 w-12 text-center text-[#A0522D] border-t border-b border-[#d6b89f] focus:ring-[#A0522D] appearance-none"
+                                       aria-label="Quantity for @unit.Name">
+                                <button type="button" onclick="incrementQuantity('@unit.Id')" class="bg-[#A0522D] text-white w-8 h-8 rounded-r-md hover:bg-[#8B4513] transition-colors" aria-label="Increase quantity of @unit.Name">
+                                    <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <label for="unit-@unit.Id" class="flex-1 flex items-center">
+                                <img src="@(unit.ImageUrl ?? "/images/default-ingredient.png")" alt="@unit.Name" class="w-10 h-10 rounded-full mr-3 object-cover" loading="lazy">
+                                <span class="font-medium">@unit.Name</span>
+                                <span class="text-gray-500 ml-2">($@unit.Price.ToString("F2"))</span>
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Plate Preview -->
+            <div class="flex flex-col items-center">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Your Plate</h3>
+                <div class="relative w-80 h-80 bg-gradient-to-br from-[#fff8f0] to-gray-200 rounded-full shadow-lg flex items-center justify-center overflow-hidden border border-[#d6b89f] hover:shadow-xl transition-shadow" id="plate-container">
+                    <div id="plate" class="w-72 h-72 bg-white rounded-full flex flex-col items-center justify-center p-4 border border-[#d6b89f]">
+                        <ul id="selected-items" class="text-sm text-gray-700 w-full"></ul>
+                        <div class="mt-4 text-center">
+                            <p class="text-lg font-semibold text-gray-800">Total: $<span id="total-price">0.00</span></p>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 border-4 border-[#d6b89f] rounded-full pointer-events-none"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <button type="button"
+                    id="submit-button"
+                    class="inline-flex items-center px-6 py-3 bg-[#A0522D] text-white font-semibold rounded-md hover:bg-[#8B4513] hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
+                    disabled
+                    onclick="openModal()"
+                    aria-label="Review Order">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                Review Order
+            </button>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-40">
+            <div class="bg-[#fff8f0] rounded-lg p-6 w-full max-w-md border border-[#d6b89f]">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Confirm Your Order</h3>
+                <p class="text-gray-600 mb-4">Please review your order details:</p>
+                <ul id="modal-items" class="list-disc pl-5 text-gray-700"></ul>
+                <p class="mt-4 font-semibold text-gray-800">Total: $<span id="modal-total">0.00</span></p>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 hover:scale-105 transition-all" aria-label="Cancel Order">Cancel</button>
+                    <button type="submit" id="confirm-submit" class="px-4 py-2 bg-[#A0522D] text-white rounded-md hover:bg-[#8B4513] hover:scale-105 transition-all" aria-label="Confirm Order">
+                        <span id="confirm-text">Confirm Order</span>
+                        <svg id="loading-spinner" class="hidden animate-spin h-5 w-5 text-white inline-block ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @@keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @@keyframes platePulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @@keyframes plateSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-plate-pulse {
+            animation: platePulse 0.5s ease-in-out;
+        }
+
+        .animate-plate-spin {
+            animation: plateSpin 0.8s ease-in-out;
+        }
+
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Ensure body doesn't hide content */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Mobile-specific styles */
+        @@media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            button, input[type="number"] {
+                transform: scale(1.1);
+            }
+
+            .text-3xl {
+                font-size: 1.75rem;
+            }
+
+            #confirmationModal > div {
+                width: 90%;
+                padding: 1rem;
+            }
+        }
+    </style>
+    <script>
+        let previousItemCount = 0; // Track previous number of selected items
+        let lastScrollTop = 0; // Track last scroll position
+
+        // Header hide/show on scroll
+        window.addEventListener('scroll', () => {
+            try {
+                const header = document.getElementById('site-header');
+                const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (currentScrollTop > lastScrollTop) {
+                    // Scrolling down: hide header
+                    header.style.transform = 'translateY(-100%)';
+                } else {
+                    // Scrolling up: show header
+                    header.style.transform = 'translateY(0)';
+                }
+                lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // Prevent negative scroll
+            } catch (error) {
+                console.error('Error in scroll handler:', error);
+            }
+        });
+
+        function updatePlate() {
+            try {
+                const inputs = document.querySelectorAll('input[name^="SelectedUnitQuantities"]');
+                const selectedItemsList = document.getElementById('selected-items');
+                const totalPriceElement = document.getElementById('total-price');
+                const submitButton = document.getElementById('submit-button');
+                const plateContainer = document.getElementById('plate-container');
+                let totalPrice = 0;
+                let totalItems = 0;
+
+                selectedItemsList.innerHTML = '';
+
+                inputs.forEach(input => {
+                    const quantity = parseInt(input.value) || 0;
+                    if (quantity > 0) {
+                        const name = input.getAttribute('data-name');
+                        const price = parseFloat(input.getAttribute('data-price'));
+                        const image = input.getAttribute('data-image');
+                        const itemTotalPrice = price * quantity;
+                        totalPrice += itemTotalPrice;
+                        totalItems += quantity;
+
+                        const listItem = document.createElement('li');
+                        listItem.className = 'py-1 flex justify-between items-center animate-slide-in';
+                        listItem.innerHTML = `
+                            <div class="flex items-center">
+                                <img src="${image}" alt="${name}" class="w-8 h-8 rounded-full mr-2 object-cover">
+                                <span>${name} x${quantity}</span>
+                            </div>
+                            <span class="text-gray-500">$${itemTotalPrice.toFixed(2)}</span>
+                        `;
+                        selectedItemsList.appendChild(listItem);
+                    }
+                });
+
+                totalPriceElement.textContent = totalPrice.toFixed(2);
+                submitButton.disabled = totalItems === 0;
+
+                // Check if a new item or quantity was added
+                const currentItemCount = totalItems;
+                if (currentItemCount > previousItemCount && currentItemCount > 0) {
+                    plateContainer.classList.add('animate-plate-pulse');
+                    plateContainer.classList.add('animate-plate-spin');
+                    setTimeout(() => {
+                        plateContainer.classList.remove('animate-plate-pulse');
+                        plateContainer.classList.remove('animate-plate-spin');
+                    }, 800);
+                } else if (currentItemCount === 0) {
+                    selectedItemsList.innerHTML = '<li class="text-gray-500 italic">No items selected</li>';
+                    totalPriceElement.textContent = '0.00';
+                }
+
+                previousItemCount = currentItemCount;
+
+                totalPriceElement.classList.add('animate-pulse');
+                setTimeout(() => totalPriceElement.classList.remove('animate-pulse'), 300);
+            } catch (error) {
+                console.error('Error in updatePlate:', error);
+            }
+        }
+
+        function incrementQuantity(unitId) {
+            try {
+                const input = document.getElementById(`unit-${unitId}`);
+                let value = parseInt(input.value) || 0;
+                if (value < 5) {
+                    input.value = value + 1;
+                    updatePlate();
+                }
+            } catch (error) {
+                console.error('Error in incrementQuantity:', error);
+            }
+        }
+
+        function decrementQuantity(unitId) {
+            try {
+                const input = document.getElementById(`unit-${unitId}`);
+                let value = parseInt(input.value) || 0;
+                if (value > 0) {
+                    input.value = value - 1;
+                    updatePlate();
+                }
+            } catch (error) {
+                console.error('Error in decrementQuantity:', error);
+            }
+        }
+
+        function openModal() {
+            try {
+                const modal = document.getElementById('confirmationModal');
+                const modalItems = document.getElementById('modal-items');
+                const modalTotal = document.getElementById('modal-total');
+                const selectedItems = document.getElementById('selected-items').innerHTML;
+                const totalPrice = document.getElementById('total-price').textContent;
+
+                modalItems.innerHTML = selectedItems;
+                modalTotal.textContent = totalPrice;
+                modal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error in openModal:', error);
+            }
+        }
+
+        function closeModal() {
+            try {
+                document.getElementById('confirmationModal').classList.add('hidden');
+            } catch (error) {
+                console.error('Error in closeModal:', error);
+            }
+        }
+
+        // Add loading state to Confirm button and toast notification
+        document.getElementById('confirm-submit').addEventListener('click', () => {
+            try {
+                const confirmButton = document.getElementById('confirm-submit');
+                const confirmText = document.getElementById('confirm-text');
+                const loadingSpinner = document.getElementById('loading-spinner');
+
+                confirmText.textContent = 'Submitting...';
+                loadingSpinner.classList.remove('hidden');
+                confirmButton.disabled = true;
+
+                // Simulate form submission with toast notification
+                setTimeout(() => {
+                    const toast = document.createElement('div');
+                    toast.id = 'toast';
+                    toast.className = 'fixed top-4 right-4 bg-[#A0522D] text-white p-4 rounded-md shadow-lg transition-opacity duration-300 z-50';
+                    toast.textContent = 'Order Submitted Successfully!';
+                    document.body.appendChild(toast);
+                    setTimeout(() => {
+                        toast.classList.add('opacity-0');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 3000);
+                    document.getElementById('order-form').submit();
+                }, 1000);
+            } catch (error) {
+                console.error('Error in confirm-submit:', error);
+            }
+        });
+
+        // Initialize
+        try {
+            updatePlate();
+        } catch (error) {
+            console.error('Error in initialization:', error);
+        }
+    </script>
+}

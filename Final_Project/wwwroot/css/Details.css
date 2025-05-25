@@ -1,0 +1,84 @@
+﻿/* Colors */
+:root {
+    --soft-brown: #A0522D;
+    --soft-brown-hover: #8B4513;
+    --soft-brown-text: #704214;
+    --card-bg-light: #fef7f0;
+    --card-bg-light-alt: #f5e8dc;
+}
+
+/* Card styling */
+.profile-card {
+    background: linear-gradient(145deg, var(--card-bg-light), var(--card-bg-light-alt));
+    border-radius: 1rem;
+    box-shadow: 0 6px 15px rgba(160, 82, 45, 0.15);
+    max-width: 650px;
+}
+
+/* Header */
+.profile-card-header {
+    background-color: var(--soft-brown);
+    color: white;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+}
+
+    /* Header icon size */
+    .profile-card-header i {
+        font-size: 1.8rem;
+    }
+
+/* Body */
+.profile-card-body .row {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #d6b89f;
+}
+
+    .profile-card-body .row:last-child {
+        border-bottom: none;
+    }
+
+/* Labels */
+.profile-label {
+    color: var(--soft-brown-text);
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+/* Footer */
+.profile-card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #d6b89f;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+/* Buttons */
+.profile-btn {
+    background-color: var(--soft-brown);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    font-weight: 600;
+    border-radius: 0.35rem;
+    box-shadow: 0 3px 6px rgba(160, 82, 45, 0.3);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+    .profile-btn:hover,
+    .profile-btn:focus {
+        background-color: var(--soft-brown-hover);
+        box-shadow: 0 5px 10px rgba(139, 69, 19, 0.5);
+        color: white;
+        text-decoration: none;
+    }

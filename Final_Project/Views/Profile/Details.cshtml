@@ -1,0 +1,84 @@
+﻿@model Final_Project.Models.Profile
+
+@{
+    ViewData["Title"] = "Profile Details";
+}
+
+<link rel="stylesheet" href="~/css/res.css">
+
+<div class="container mt-5">
+    <div class="card shadow rounded-4 profile-card mx-auto" style="max-width: 650px;">
+        <div class="card-header profile-card-header">
+            <i class="fas fa-user-circle"></i> Profile Details
+        </div>
+        <div class="card-body profile-card-body">
+            <!-- Profile Info -->
+            <div class="row mb-3">
+                <div class="col-sm-4 profile-label">Username:</div>
+                <div class="col-sm-8">@Model.Username</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-4 profile-label">Gender:</div>
+                <div class="col-sm-8">@(Model.Gender ?? "Not specified")</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-4 profile-label">Registered Date:</div>
+                <div class="col-sm-8">@Model.RegisteredDate.ToString("dd MMM yyyy")</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-4 profile-label">Customer Name:</div>
+                <div class="col-sm-8">@Model.Customer?.Name</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-4 profile-label">Email:</div>
+                <div class="col-sm-8">@Model.Customer?.Email</div>
+            </div>
+
+            <!-- Coupons Section -->
+            <h4 class="mt-4">Coupons</h4>
+
+            @if (Model.Coupons != null && Model.Coupons.Any())
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var coupon in Model.Coupons)
+                        {
+                            <tr>
+                                <td>@coupon.Code</td>
+                                <td>@coupon.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                                <td>@(coupon.IsUsed ? "Used" : "Available")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No coupons available.</p>
+            }
+        </div>
+        <div class="card-footer profile-card-footer d-flex justify-content-between">
+            <div class="d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.ProfileID" class="btn profile-btn">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.ProfileID" class="btn profile-btn">
+                    <i class="fas fa-trash"></i> Delete
+                </a>
+            </div>
+            <a asp-action="Index" class="btn profile-btn">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="~/css/Details.css" />
+    <link rel="stylesheet" href="~/css/profile.css" />
+</div>

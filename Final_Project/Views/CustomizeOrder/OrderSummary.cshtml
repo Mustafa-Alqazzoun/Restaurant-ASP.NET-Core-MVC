@@ -1,0 +1,31 @@
+﻿@model Final_Project.ViewModels.OrderSummaryViewModel
+
+<h2>Order Summary</h2>
+
+@if (Model.Order == null)
+{
+    <p>No order found.</p>
+}
+else
+{
+    <h3>Order Details</h3>
+    <p><strong>Order ID:</strong> @Model.Order.Id</p>
+    <p><strong>Customer Name:</strong> @Model.Order.CustomerName</p>
+    <p><strong>Total Price:</strong> @Model.Order.TotalPrice.ToString("C")</p>
+    <p><strong>Order Date:</strong> @Model.Order.OrderDate.ToString("g")</p>
+
+    <h4>Selected Ingredients</h4>
+    @if (Model.Units.Any())
+    {
+        <ul>
+            @foreach (var unit in Model.Units)
+            {
+                <li>@unit.Name - @unit.Price.ToString("C")</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No ingredients selected.</p>
+    }
+}

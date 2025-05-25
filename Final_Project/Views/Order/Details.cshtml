@@ -1,0 +1,496 @@
+﻿@model Final_Project.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-receipt me-2"></i>Order Details - #@Model.OrderID
+                    </h4>
+                </div>
+                <div class="card-body">
+
+                    <!-- Success/Error Messages -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- Order Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Order ID:</strong></td>
+                                            <td>#@Model.OrderID</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Order Time:</strong></td>
+                                            <td>@Model.OrderTime.ToString("yyyy-MM-dd HH:mm")</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Status:</strong></td>
+                                            <td>
+                                                <span class="badge @GetStatusBadgeClass(Model.Status)">
+                                                    @Model.Status
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Amount:</strong></td>
+                                            <td><strong class="text-success">$@Model.TotalAmount.ToString("F2")</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Payment Method:</strong></td>
+                                            <td>@(Model.PaymentMethod ?? "Not specified")</td>
+                                        </tr>
+                                        @if (Model.TableID.HasValue)
+                                        {
+                                            <tr>
+                                                <td><strong>Table:</strong></td>
+                                                <td>Table #@Model.TableID</td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Customer & Branch</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Customer:</strong></td>
+                                            <td>@(Model.Customer?.Name ?? "Walk-in Customer")</td>
+                                        </tr>
+                                        @if (Model.Customer != null)
+                                        {
+                                            <tr>
+                                                <td><strong>Contact:</strong></td>
+                                                <td>@(Model.Customer.ContactNumber ?? "N/A")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Email:</strong></td>
+                                                <td>@(Model.Customer.Email ?? "N/A")</td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td><strong>Branch:</strong></td>
+                                            <td>@Model.Branch?.Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Branch Address:</strong></td>
+                                            <td>@Model.Branch?.Address</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-utensils me-2"></i>Order Items</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.OrderItems != null && Model.OrderItems.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Item</th>
+                                                <th>Category</th>
+                                                <th>Unit Price</th>
+                                                <th>Quantity</th>
+                                                <th>Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.OrderItems)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@item.FoodItem?.Name</strong>
+                                                        @if (!string.IsNullOrEmpty(item.FoodItem?.Description))
+                                                        {
+                                                            <br>
+
+                                                            <small class="text-muted">@item.FoodItem.Description</small>
+                                                        }
+                                                    </td>
+                                                    <td>@item.FoodItem?.FoodCategory?.CategoryName</td>
+                                                    <td>$@item.Price.ToString("F2")</td>
+                                                    <td>@item.Quantity</td>
+                                                    <td><strong>$@((item.Price * item.Quantity).ToString("F2"))</strong></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot class="table-light">
+                                            <tr>
+                                                <th colspan="4" class="text-end">Total:</th>
+                                                <th class="text-success">$@Model.TotalAmount.ToString("F2")</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>No items found for this order.
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Status Update Section -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Order Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="UpdateStatus" method="post" class="row g-3">
+                                <input type="hidden" name="orderId" value="@Model.OrderID" />
+
+
+                                <div class="col-md-6">
+                                    <label for="status" class="form-label">Status:</label>
+                                    <select name="status" id="status" class="form-select" required>
+                                        <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+                                        <option value="Preparing" selected="@(Model.Status == "Preparing")">Preparing</option>
+                                        <option value="Ready" selected="@(Model.Status == "Ready")">Ready</option>
+                                        <option value="Served" selected="@(Model.Status == "Served")">Served</option>
+                                        <option value="Completed" selected="@(Model.Status == "Completed")">Completed</option>
+                                        <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Cancelled</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-custom-primary me-2">
+                                        <i class="fas fa-check me-1"></i>Update Status
+                                    </button>
+                                    <a asp-action="Index" class="btn btn-custom-secondary">
+                                        <i class="fas fa-arrow-left me-1"></i>Back to Orders
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "bg-warning text-dark",
+            "Preparing" => "bg-info",
+            "Ready" => "bg-primary",
+            "Served" => "bg-success",
+            "Completed" => "bg-success",
+            "Cancelled" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+<style>
+    /* Custom Color Variables */
+    :root {
+        --soft-brown: #A0522D;
+        --soft-brown-hover: #8B4513;
+        --background-light: #fff8f0;
+        --border-light: #d6b89f;
+        --soft-brown-light: rgba(160, 82, 45, 0.1);
+        --soft-brown-text: #654321;
+    }
+
+    body {
+        background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1920&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+    /* Enhanced Card Styling */
+    .card {
+        background-color: var(--background-light);
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(160, 82, 45, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            box-shadow: 0 6px 20px rgba(160, 82, 45, 0.15);
+            transform: translateY(-2px);
+        }
+
+    /* Enhanced Card Headers */
+    .card-header {
+        background: linear-gradient(135deg, var(--soft-brown), var(--soft-brown-hover)) !important;
+        color: white !important;
+        border-bottom: 2px solid var(--border-light);
+        border-radius: 10px 10px 0 0 !important;
+        padding: 1.2rem 1.5rem;
+    }
+
+        .card-header.bg-light {
+            background: linear-gradient(135deg, var(--background-light), #f5f0e8) !important;
+            color: var(--soft-brown-text) !important;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .card-header h4, .card-header h5 {
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+    /* Enhanced Card Body */
+    .card-body {
+        padding: 1.5rem;
+        background-color: var(--background-light);
+    }
+
+    /* Custom Button Styles */
+    .btn-custom-primary {
+        background: linear-gradient(135deg, var(--soft-brown), var(--soft-brown-hover));
+        border: 2px solid var(--soft-brown);
+        color: white;
+        font-weight: 600;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+        .btn-custom-primary:hover {
+            background: linear-gradient(135deg, var(--soft-brown-hover), #6b3410);
+            border-color: var(--soft-brown-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(160, 82, 45, 0.3);
+        }
+
+    .btn-custom-secondary {
+        background: var(--background-light);
+        border: 2px solid var(--border-light);
+        color: var(--soft-brown-text);
+        font-weight: 600;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+        .btn-custom-secondary:hover {
+            background: var(--soft-brown-light);
+            border-color: var(--soft-brown);
+            color: var(--soft-brown);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(160, 82, 45, 0.2);
+        }
+
+    /* Enhanced Form Controls */
+    .form-select {
+        border: 2px solid var(--border-light);
+        border-radius: 8px;
+        background-color: var(--background-light);
+        color: var(--soft-brown-text);
+        padding: 0.6rem 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .form-select:focus {
+            border-color: var(--soft-brown);
+            box-shadow: 0 0 0 0.2rem rgba(160, 82, 45, 0.25);
+            background-color: white;
+        }
+
+    .form-label {
+        color: var(--soft-brown-text);
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+    }
+
+    /* Enhanced Table Styling */
+    .table {
+        background-color: var(--background-light);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table-borderless td {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid rgba(214, 184, 159, 0.3);
+    }
+
+        .table-borderless td:first-child {
+            color: var(--soft-brown-text);
+            font-weight: 600;
+        }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 248, 240, 0.7);
+    }
+
+    .table-dark {
+        background: linear-gradient(135deg, var(--soft-brown), var(--soft-brown-hover));
+        color: white;
+    }
+
+    .table-light {
+        background: linear-gradient(135deg, var(--background-light), #f5f0e8);
+        color: var(--soft-brown-text);
+        font-weight: 600;
+    }
+
+    /* Enhanced Badge Styling */
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Enhanced Alert Styling */
+    .alert {
+        border-radius: 10px;
+        border: 2px solid;
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background-color: rgba(40, 167, 69, 0.1);
+        border-color: rgba(40, 167, 69, 0.3);
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+        border-color: rgba(220, 53, 69, 0.3);
+        color: #721c24;
+    }
+
+    .alert-info {
+        background-color: var(--soft-brown-light);
+        border-color: var(--border-light);
+        color: var(--soft-brown-text);
+    }
+
+    /* Enhanced Text Colors */
+    .text-success {
+        color: #28a745 !important;
+        font-weight: 600;
+    }
+
+    .text-muted {
+        color: rgba(101, 67, 33, 0.6) !important;
+    }
+
+    /* Container Enhancement */
+    .container {
+        max-width: 1200px;
+    }
+
+    /* Responsive Enhancements */
+    (max-width: 768px) {
+        .card-body
+
+    {
+        padding: 1rem;
+    }
+
+    .btn-custom-primary, .btn-custom-secondary {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .card-header {
+        padding: 1rem;
+    }
+
+    }
+
+    /* Add subtle animations */
+   keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+        .card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+</style>

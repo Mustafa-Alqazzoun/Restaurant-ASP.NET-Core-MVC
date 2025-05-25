@@ -1,0 +1,647 @@
+﻿@model Final_Project.ViewModels.FoodItemDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.FoodItem.Name + " - Details";
+}
+
+<div class="food-details-container">
+    <!-- Navigation Breadcrumb -->
+    <nav class="breadcrumb-nav">
+        <a asp-controller="Order" asp-action="Menu" class="breadcrumb-link">
+            <i class="fas fa-arrow-left"></i> Back to Menu
+        </a>
+        <span class="breadcrumb-separator">|</span>
+        <span class="breadcrumb-current">@Model.CategoryName</span>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="details-content">
+        <!-- Left Side - Image and Basic Info -->
+        <div class="item-showcase">
+            <div class="item-image-container">
+                @if (!string.IsNullOrEmpty(Model.FoodItem.ItemImage))
+                {
+                    <img src="~/Images/FoodItems/@Model.FoodItem.ItemImage"
+                         class="item-image"
+                         alt="@Model.FoodItem.Name"
+                         onerror="this.src='~/Images/FoodItems/default.jpg'; this.onerror=null;" />
+                }
+                else
+                {
+                    <div class="no-image-placeholder">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                }
+                <div class="price-overlay">@Model.FormattedPrice</div>
+            </div>
+
+            <div class="item-basic-info">
+                <div class="category-badge">@Model.CategoryName</div>
+                <h1 class="item-title">@Model.FoodItem.Name</h1>
+
+                @if (!string.IsNullOrEmpty(Model.FoodItem.Description))
+                {
+                    <p class="item-description">@Model.FoodItem.Description</p>
+                }
+                else
+                {
+                    <p class="item-description default-desc">A delicious and carefully prepared dish from our kitchen.</p>
+                }
+
+                <div class="action-buttons">
+                    <a asp-controller="Order" asp-action="Create"
+                       class="order-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        Add to Order
+                    </a>
+                    <button class="share-btn" onclick="shareItem()">
+                        <i class="fas fa-share-alt"></i>
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Nutrition Information -->
+        <div class="nutrition-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fas fa-leaf"></i>
+                    Nutrition Information
+                </h2>
+            </div>
+
+            @if (Model.HasNutrition)
+            {
+                <div class="nutrition-content">
+                    <div class="nutrition-grid">
+                        <div class="nutrition-item calories">
+                            <div class="nutrition-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="nutrition-info">
+                                <span class="nutrition-value">@Model.Nutrition.Calories</span>
+                                <span class="nutrition-label">Calories</span>
+                            </div>
+                        </div>
+
+                        <div class="nutrition-item protein">
+                            <div class="nutrition-icon">
+                                <i class="fas fa-drumstick-bite"></i>
+                            </div>
+                            <div class="nutrition-info">
+                                <span class="nutrition-value">@Model.Nutrition.Protein g</span>
+                                <span class="nutrition-label">Protein</span>
+                            </div>
+                        </div>
+
+                        <div class="nutrition-item carbs">
+                            <div class="nutrition-icon">
+                                <i class="fas fa-bread-slice"></i>
+                            </div>
+                            <div class="nutrition-info">
+                                <span class="nutrition-value">@Model.Nutrition.Carbohydrates g</span>
+                                <span class="nutrition-label">Carbohydrates</span>
+                            </div>
+                        </div>
+
+                        <div class="nutrition-item fat">
+                            <div class="nutrition-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="nutrition-info">
+                                <span class="nutrition-value">@Model.Nutrition.Fat g</span>
+                                <span class="nutrition-label">Fat</span>
+                            </div>
+                        </div>
+
+                        <div class="nutrition-item fiber">
+                            <div class="nutrition-icon">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <div class="nutrition-info">
+                                <span class="nutrition-value">@Model.Nutrition.Fiber g</span>
+                                <span class="nutrition-label">Fiber</span>
+                            </div>
+                        </div>
+
+                        <div class="nutrition-item sugar">
+                            <div class="nutrition-icon">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <div class="nutrition-info">
+                                <span class="nutrition-value">@Model.Nutrition.Sugar g</span>
+                                <span class="nutrition-label">Sugar</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nutrition-note">
+                        <i class="fas fa-info-circle"></i>
+                        <small>Nutritional values are approximate and may vary based on preparation.</small>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="no-nutrition">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Nutrition information not available for this item.</p>
+                    <small>Please contact our staff for dietary information.</small>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Related Items Section -->
+    @if (Model.RelatedItems.Any())
+    {
+        <div class="related-section">
+            <h3 class="related-title">You Might Also Like</h3>
+            <div class="related-items">
+                @foreach (var item in Model.RelatedItems)
+                {
+                    <div class="related-item">
+                        <a asp-controller="FoodItem" asp-action="Details" asp-route-id="@item.FoodItemID" class="related-link">
+                            <div class="related-image">
+                                @if (!string.IsNullOrEmpty(item.ItemImage))
+                                {
+                                    <img src="~/Images/FoodItems/@item.ItemImage"
+                                         alt="@item.Name"
+                                         onerror="this.src='~/Images/FoodItems/default.jpg'; this.onerror=null;" />
+                                }
+                                else
+                                {
+                                    <div class="related-placeholder">
+                                        <i class="fas fa-utensils"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="related-info">
+                                <h5 class="related-name">@item.Name</h5>
+                                <span class="related-price">@item.Price.ToString("C")</span>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    :root {
+        --soft-brown: #A0522D;
+        --soft-brown-hover: #8B4513;
+        --background-light: #fff8f0;
+        --border-light: #d6b89f;
+        --text-dark: #3d2914;
+        --text-muted: #8b7355;
+        --success-green: #28a745;
+        --warning-orange: #fd7e14;
+        --info-blue: #17a2b8;
+    }
+
+    .food-details-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(255, 248, 240, 0.95) 0%, rgba(250, 245, 237, 0.95) 100%);
+        min-height: 100vh;
+    }
+
+    .breadcrumb-nav {
+        margin-bottom: 2rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .breadcrumb-link {
+        color: var(--soft-brown);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+        .breadcrumb-link:hover {
+            color: var(--soft-brown-hover);
+            text-decoration: none;
+        }
+
+    .breadcrumb-separator {
+        margin: 0 1rem;
+        color: var(--text-muted);
+    }
+
+    .breadcrumb-current {
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    .details-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .item-showcase {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(160, 82, 45, 0.1);
+        border: 1px solid var(--border-light);
+    }
+
+    .item-image-container {
+        position: relative;
+        height: 350px;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .item-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .no-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--border-light), #e8d5c4);
+        color: var(--text-muted);
+        font-size: 4rem;
+    }
+
+    .price-overlay {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--soft-brown);
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 1.3rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .category-badge {
+        display: inline-block;
+        background: var(--background-light);
+        color: var(--soft-brown);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-light);
+    }
+
+    .item-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .item-description {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .default-desc {
+        font-style: italic;
+        opacity: 0.8;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .order-btn, .share-btn {
+        padding: 1rem 2rem;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        border: none;
+    }
+
+    .order-btn {
+        background: var(--soft-brown);
+        color: white;
+        flex: 1;
+        justify-content: center;
+    }
+
+        .order-btn:hover {
+            background: var(--soft-brown-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(160, 82, 45, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .share-btn {
+        background: var(--background-light);
+        color: var(--soft-brown);
+        border: 2px solid var(--border-light);
+    }
+
+        .share-btn:hover {
+            background: var(--soft-brown);
+            color: white;
+            border-color: var(--soft-brown);
+        }
+
+    .nutrition-panel {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(160, 82, 45, 0.1);
+        border: 1px solid var(--border-light);
+        height: fit-content;
+    }
+
+    .panel-header {
+        margin-bottom: 2rem;
+    }
+
+    .panel-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .panel-title i {
+            color: var(--success-green);
+        }
+
+    .nutrition-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .nutrition-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--background-light);
+        border-radius: 12px;
+        border: 1px solid var(--border-light);
+        transition: transform 0.3s ease;
+    }
+
+        .nutrition-item:hover {
+            transform: translateY(-2px);
+        }
+
+    .nutrition-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .calories .nutrition-icon {
+        background: rgba(255, 193, 7, 0.2);
+        color: #e09900;
+    }
+
+    .protein .nutrition-icon {
+        background: rgba(220, 53, 69, 0.2);
+        color: #c82333;
+    }
+
+    .carbs .nutrition-icon {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+
+    .fat .nutrition-icon {
+        background: rgba(23, 162, 184, 0.2);
+        color: #17a2b8;
+    }
+
+    .fiber .nutrition-icon {
+        background: rgba(108, 117, 125, 0.2);
+        color: #6c757d;
+    }
+
+    .sugar .nutrition-icon {
+        background: rgba(253, 126, 20, 0.2);
+        color: #fd7e14;
+    }
+
+    .nutrition-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nutrition-value {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--text-dark);
+    }
+
+    .nutrition-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+
+    .nutrition-note {
+        background: rgba(23, 162, 184, 0.1);
+        border: 1px solid rgba(23, 162, 184, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        color: var(--info-blue);
+    }
+
+        .nutrition-note i {
+            margin-top: 0.2rem;
+        }
+
+    .no-nutrition {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--text-muted);
+    }
+
+        .no-nutrition i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--warning-orange);
+        }
+
+    .related-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(160, 82, 45, 0.1);
+        border: 1px solid var(--border-light);
+    }
+
+    .related-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .related-items {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .related-item {
+        background: var(--background-light);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border-light);
+        transition: all 0.3s ease;
+    }
+
+        .related-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(160, 82, 45, 0.2);
+        }
+
+    .related-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+        .related-link:hover {
+            text-decoration: none;
+            color: inherit;
+        }
+
+    .related-image {
+        height: 150px;
+        overflow: hidden;
+    }
+
+        .related-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .related-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--border-light);
+        color: var(--text-muted);
+        font-size: 2rem;
+    }
+
+    .related-info {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .related-name {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .related-price {
+        color: var(--soft-brown);
+        font-weight: 700;
+    }
+
+    /* Responsive Design */
+    (max-width: 768px) {
+        .food-details-container
+
+    {
+        padding: 1rem;
+    }
+
+    .details-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .item-title {
+        font-size: 2rem;
+    }
+
+    .nutrition-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .related-items {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    }
+</style>
+
+<script>
+    function shareItem() {
+        if (navigator.share) {
+            navigator.share({
+                title: '@Model.FoodItem.Name',
+                text: 'Check out this delicious item: @Model.FoodItem.Name',
+                url: window.location.href
+            });
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(function() {
+                alert('Link copied to clipboard!');
+            }, function() {
+                // If clipboard API fails, show the URL in a prompt
+                prompt('Copy this link:', url);
+            });
+        }
+    }
+
+    // Add smooth scrolling for any anchor links
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add any additional JavaScript functionality here
+        console.log('Food item details page loaded');
+    });
+</script>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

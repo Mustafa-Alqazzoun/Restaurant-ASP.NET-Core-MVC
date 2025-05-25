@@ -1,0 +1,465 @@
+﻿@model List<Final_Project.Models.FoodCategory>
+
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<div class="menu-container">
+    <div class="menu-header">
+        <h2 class="main-title">Our Delicious Menu</h2>
+        <p class="subtitle">Discover our carefully crafted dishes</p>
+
+        <!-- Moved Order Button to Top -->
+        <div class="order-section-top">
+            <a asp-controller="Order" asp-action="Create" class="order-now-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Start Your Order</span>
+            </a>
+        </div>
+    </div>
+
+    @foreach (var category in Model)
+    {
+        <div class="category-section">
+            <div class="category-header-container">
+                <h3 class="category-title">@category.CategoryName</h3>
+                <div class="navigation-controls">
+                    <button class="nav-btn prev-btn" data-category="@category.CategoryID">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-btn next-btn" data-category="@category.CategoryID">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="food-items-wrapper">
+                <div class="food-items-container" id="container-@category.CategoryID">
+                    @foreach (var item in category.FoodItems)
+                    {
+                        <div class="food-item-card" onclick="location.href='@Url.Action("Details", "FoodItem", new { id = item.FoodItemID })'">
+                            <div class="card-image-container">
+                                @if (!string.IsNullOrEmpty(item.ItemImage))
+                                {
+                                    <img src="~/Images/FoodItems/@item.ItemImage"
+                                         class="food-item-image"
+                                         alt="@item.Name"
+                                         onerror="this.src='~/Images/FoodItems/default.jpg'; this.onerror=null;" />
+                                }
+                                else
+                                {
+                                    <div class="no-image-placeholder">
+                                        <i class="fas fa-utensils"></i>
+                                    </div>
+                                }
+                                <div class="price-badge">$@item.Price.ToString("F2")</div>
+                            </div>
+                            <div class="card-content">
+                                <h5 class="item-name">@item.Name</h5>
+                                <p class="item-description">
+                                    @if (!string.IsNullOrEmpty(item.Description))
+                                    {
+                                        @item.Description
+                                    }
+                                    else
+                                    {
+                                        <span class="no-description">Delicious and fresh</span>
+                                    }
+                                </p>
+                            </div>
+                            <div class="card-overlay">
+                                <div class="view-details-btn">
+                                    <i class="fas fa-eye"></i>
+                                    <span>View Details</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    :root {
+        --soft-brown: #A0522D;
+        --soft-brown-hover: #8B4513;
+        --background-light: #fff8f0;
+        --border-light: #d6b89f;
+        --text-dark: #3d2914;
+        --text-muted: #8b7355;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .menu-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: clamp(1rem, 3vw, 2rem) clamp(0.5rem, 2vw, 1rem);
+        background: linear-gradient(135deg, rgba(255, 248, 240, 0.8) 0%, rgba(250, 245, 237, 0.8) 100%), url('@Url.Content("~/Images/BackGrounds/MenuBackGround.png")');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+
+    .main-title {
+        font-size: clamp(1.8rem, 5vw, 3rem);
+        font-weight: 700;
+        color: var(--soft-brown);
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .menu-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem 0;
+    }
+
+
+    .subtitle {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-bottom: 2rem;
+    }
+
+    /* Order Section at Top */
+    .order-section-top {
+        margin-top: 2rem;
+    }
+
+    .category-section {
+        margin-bottom: 4rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(160, 82, 45, 0.1);
+        border: 1px solid var(--border-light);
+        backdrop-filter: blur(10px);
+    }
+
+    .category-title {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .category-header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--border-light);
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .navigation-controls {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .nav-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 2px solid var(--border-light);
+        background: var(--background-light);
+        color: var(--soft-brown);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+        .nav-btn:hover {
+            background: var(--soft-brown);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(160, 82, 45, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .food-items-wrapper {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+    }
+
+    .food-items-container {
+        display: flex;
+        gap: 1.5rem;
+        padding: 1rem 0;
+        transition: transform 0.3s ease;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+        .food-items-container::-webkit-scrollbar {
+            display: none;
+        }
+
+    .food-item-card {
+        flex: 0 0 clamp(220px, 25vw, 280px);
+        background: var(--background-light);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(160, 82, 45, 0.15);
+        border: 1px solid var(--border-light);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .card-image-container {
+        position: relative;
+        height: clamp(160px, 20vw, 200px);
+        overflow: hidden;
+    }
+        .food-item-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(160, 82, 45, 0.25);
+            border-color: var(--soft-brown);
+        }
+
+            .food-item-card:hover .card-overlay {
+                opacity: 1;
+            }
+
+
+    .food-item-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .food-item-card:hover .food-item-image {
+        transform: scale(1.05);
+    }
+
+    .no-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--border-light), #e8d5c4);
+        color: var(--text-muted);
+        font-size: 2.5rem;
+    }
+
+    .price-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: var(--soft-brown);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .card-content {
+        padding: 1.5rem;
+    }
+
+    .item-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.8rem;
+        line-height: 1.3;
+    }
+
+    .item-description {
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .no-description {
+        font-style: italic;
+        opacity: 0.8;
+    }
+
+    .order-now-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        padding: clamp(1rem, 2vw, 1.2rem) clamp(2rem, 4vw, 3rem);
+        background: linear-gradient(45deg, var(--soft-brown), var(--soft-brown-hover));
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-size: clamp(1.1rem, 2vw, 1.2rem);
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(160, 82, 45, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+        .order-now-btn:hover {
+            background: linear-gradient(45deg, var(--soft-brown-hover), var(--soft-brown));
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(160, 82, 45, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .order-now-btn i {
+            font-size: 1.3rem;
+        }
+
+    .card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(160, 82, 45, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 15px;
+    }
+
+    .view-details-btn {
+        color: white;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .view-details-btn i {
+            font-size: 2rem;
+        }
+
+    /* Responsive Design */
+    (max-width: 768px) {
+        .menu-container
+
+    {
+        padding: 1rem 0.5rem;
+        background-attachment: scroll;
+    }
+
+    .main-title {
+        font-size: 2.2rem;
+    }
+
+    .category-header-container {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .category-title {
+        font-size: 1.8rem;
+    }
+
+    .food-item-card {
+        flex: 0 0 250px;
+    }
+
+    .food-items-container {
+        gap: 1rem;
+    }
+
+    .order-now-btn {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    }
+
+    (max-width: 480px) {
+        .food-item-card
+
+    {
+        flex: 0 0 220px;
+    }
+
+    .card-image-container {
+        height: 160px;
+    }
+
+    .main-title {
+        font-size: 1.8rem;
+    }
+
+    .category-title {
+        font-size: 1.5rem;
+    }
+
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Horizontal scrolling functionality
+        document.querySelectorAll('.nav-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const categoryId = this.dataset.category;
+                const container = document.getElementById(`container-${categoryId}`);
+                const scrollAmount = 300;
+
+                if (this.classList.contains('prev-btn')) {
+                    container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                } else {
+                    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Update navigation button states
+        document.querySelectorAll('.food-items-container').forEach(container => {
+            container.addEventListener('scroll', function() {
+                const categoryId = this.id.replace('container-', '');
+                const prevBtn = document.querySelector(`.prev-btn[data-category="${categoryId}"]`);
+                const nextBtn = document.querySelector(`.next-btn[data-category="${categoryId}"]`);
+
+                // Check if at beginning
+                prevBtn.disabled = this.scrollLeft <= 0;
+
+                // Check if at end
+                nextBtn.disabled = this.scrollLeft >= (this.scrollWidth - this.clientWidth);
+            });
+
+            // Initial state
+            container.dispatchEvent(new Event('scroll'));
+        });
+    });
+</script>
+
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

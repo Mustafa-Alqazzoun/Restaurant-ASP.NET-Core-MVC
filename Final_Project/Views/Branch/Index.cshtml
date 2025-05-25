@@ -1,0 +1,37 @@
+﻿@model List<Final_Project.Models.Branch>
+@{
+    ViewData["Title"] = "Branch List";
+}
+<h2>Branch List</h2>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Branch</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Branch ID</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Contact Number</th>
+            <th>Manager ID</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var branch in Model)
+        {
+            <tr>
+                <td>@branch.BranchID</td>
+                <td>@branch.Name</td>
+                <td>@branch.Address</td>
+                <td>@branch.ContactNumber</td>
+                <td>@branch.ManagerID</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@branch.BranchID" class="btn btn-info btn-sm">Details</a>
+                    <a asp-action="Edit" asp-route-id="@branch.BranchID" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@branch.BranchID" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

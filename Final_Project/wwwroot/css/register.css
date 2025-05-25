@@ -1,0 +1,43 @@
+﻿/* wwwroot/css/register.css */
+
+@import url('https://fonts.googleapis.com/css?family=Numans');
+
+html, body {
+    background-image: url('https://getwallpapers.com/wallpaper/full/a/5/d/544750.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    font-family: 'Numans', sans-serif;
+}
+
+.container {
+    height: 100%;
+    align-content: center;
+}
+
+.card {
+    height: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 500px;
+    background-color: rgba(0,0,0,0.5) !important;
+    padding: 20px;
+}
+
+.card-header h3 {
+    color: white;
+}
+
+.form-group label, .links, .remember {
+    color: white;
+}
+
+.login_btn {
+    background-color: #FFC312;
+    color: black;
+}
+
+    .login_btn:hover {
+        background-color: white;
+        color: black;
+    }
