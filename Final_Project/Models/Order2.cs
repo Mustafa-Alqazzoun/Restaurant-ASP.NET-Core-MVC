@@ -15,7 +15,7 @@ namespace Final_Project.Models
 
         [ForeignKey("CustomerID")]
         public Customer Customer { get; set; }
-        public string TableID { get; set; }
+        public string? TableID { get; set; }
         public string CustomerName { get; set; }
         public int CustomerNumber { get; set; }
         public float TotalPrice { get; set; }

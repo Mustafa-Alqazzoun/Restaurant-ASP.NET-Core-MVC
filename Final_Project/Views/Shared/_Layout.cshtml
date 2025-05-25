@@ -53,16 +53,498 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Restaurant Reservation</title>
+    <title>@ViewData["Title"] - SeersRest</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <!-- Add common styles here if needed -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --soft-brown: #A0522D;
+            --soft-brown-hover: #8B4513;
+            --background-light: #fff8f0;
+            --border-light: #d6b89f;
+            --text-dark: #2c2c2c;
+            --text-light: #6c6c6c;
+            --golden-accent: #D4AF37;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafafa;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation Styles */
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--soft-brown) 0%, var(--soft-brown-hover) 100%);
+            box-shadow: 0 4px 15px rgba(160, 82, 45, 0.2);
+            padding: 0.75rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+            .navbar-brand:hover {
+                color: var(--golden-accent) !important;
+                transform: translateY(-1px);
+            }
+
+        .navbar-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover .navbar-logo {
+            border-color: var(--golden-accent);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .navbar-brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .restaurant-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .restaurant-tagline {
+            font-size: 0.75rem;
+            font-weight: 400;
+            opacity: 0.9;
+            font-style: italic;
+            color: var(--golden-accent);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .navbar-nav {
+            gap: 0.5rem;
+        }
+
+        .nav-link-custom {
+            color: white !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .nav-link-custom::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s;
+            }
+
+            .nav-link-custom:hover::before {
+                left: 100%;
+            }
+
+            .nav-link-custom:hover {
+                background-color: rgba(255, 255, 255, 0.15);
+                transform: translateY(-2px);
+                color: var(--golden-accent) !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .nav-link-custom.active {
+                background-color: rgba(255, 255, 255, 0.2);
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+        /* Main Content Area */
+        .main-content {
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+
+        /* Card Enhancements */
+        .card {
+            background-color: var(--background-light);
+            border: 2px solid var(--border-light);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(160, 82, 45, 0.1);
+            transition: all 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 35px rgba(160, 82, 45, 0.15);
+            }
+
+        /* Button Enhancements */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--soft-brown) 0%, var(--soft-brown-hover) 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(160, 82, 45, 0.2);
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, var(--soft-brown-hover) 0%, #654321 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(160, 82, 45, 0.3);
+            }
+
+        .btn-outline-primary {
+            color: var(--soft-brown);
+            border: 2px solid var(--soft-brown);
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+            .btn-outline-primary:hover {
+                background-color: var(--soft-brown);
+                border-color: var(--soft-brown);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(160, 82, 45, 0.2);
+            }
+
+        /* Form Enhancements */
+        .form-control {
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            background-color: var(--background-light);
+            transition: all 0.3s ease;
+            padding: 0.75rem 1rem;
+        }
+
+            .form-control:focus {
+                border-color: var(--soft-brown);
+                box-shadow: 0 0 0 0.2rem rgba(160, 82, 45, 0.25);
+                background-color: white;
+            }
+
+        /* Alert Enhancements */
+        .alert {
+            border-radius: 15px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--soft-brown) 0%, var(--soft-brown-hover) 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+            .footer a {
+                color: var(--golden-accent);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .footer a:hover {
+                    color: white;
+                }
+
+        /* Mobile Responsiveness */
+        (max-width: 768px) {
+            .navbar-nav
+
+        {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .nav-link-custom {
+            margin: 0.25rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.4rem;
+        }
+
+        .restaurant-name {
+            font-size: 1.4rem;
+        }
+
+        .restaurant-tagline {
+            font-size: 0.65rem;
+        }
+
+        .navbar-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .main-content {
+            padding: 1rem 0;
+        }
+
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--background-light) 0%, #f0f0f0 100%);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 2px solid var(--border-light);
+        }
+
+            .welcome-section h1 {
+                color: var(--soft-brown);
+                font-weight: 700;
+                margin-bottom: 1rem;
+            }
+
+            .welcome-section p {
+                color: var(--text-light);
+                font-size: 1.1rem;
+                line-height: 1.6;
+            }
+
+        /* Animation for page load */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        /* Navbar toggle button */
+        .navbar-toggler {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+            .navbar-toggler:focus {
+                box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+            }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+    </style>
 </head>
 <body>
-    @RenderBody()
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-custom">
+            <div class="container">
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                    <img src="~/images/Logo1/Logo1.jpeg" alt="SeersRest Logo" class="navbar-logo" />
+                    <div class="navbar-brand-text">
+                        <span class="restaurant-name">SeersRest</span>
+                        <span class="restaurant-tagline">Fine Dining Experience</span>
+                    </div>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link-custom" href="@Url.Action("Index", "Home")">
+                                <i class="fas fa-home"></i>
+                                Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-custom" href="@Url.Action("Menu", "Order")">
+                                <i class="fas fa-utensils"></i>
+                                Our Menu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-custom" href="@Url.Action("FindNearestBranch", "Reservation")">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Locations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-custom" href="@Url.Action("AddReservation", "Reservation")">
+                                <i class="fas fa-calendar-plus"></i>
+                                Reserve Table
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-custom" href="@Url.Action("Create", "Order")">
+                                <i class="fas fa-shopping-bag"></i>
+                                Order Online
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-custom" href="@Url.Action("Index", "Profile")">
+                                <i class="fas fa-user-circle"></i>
+                                My Account
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container main-content fade-in">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="mb-2">
+                        &copy; 2025 - SeersRest Restaurant -
+                        <a href="@Url.Action("Privacy", "Home")">Privacy Policy</a>
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-heart" style="color: var(--golden-accent);"></i>
+                        Crafting exceptional culinary experiences since 2025
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <p class="mb-2">
+                        <i class="fas fa-phone"></i> (555) 123-DINE
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-envelope"></i> hello@seersrest.com
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        // Add active class to current page navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link-custom');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Handle logo image loading error
+            const logo = document.querySelector('.navbar-logo');
+            if (logo) {
+                logo.addEventListener('error', function() {
+                    // Fallback to icon if image fails to load
+                    this.style.display = 'none';
+                    const fallbackIcon = document.createElement('i');
+                    fallbackIcon.className = 'fas fa-utensils fa-2x';
+                    fallbackIcon.style.color = 'var(--golden-accent)';
+                    this.parentNode.insertBefore(fallbackIcon, this);
+                });
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add subtle animation to navbar on scroll
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const navbar = document.querySelector('.navbar-custom');
+
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scrolling down
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                // Scrolling up
+                navbar.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = scrollTop;
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

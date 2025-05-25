@@ -1,449 +1,421 @@
-﻿@* @model Final_Project.ViewModels.MakeReservation *@
-
-@* @{ *@
-@*     ViewData["Title"] = "Edit Reservation"; *@
-@* } *@
-
-@* <h2>Edit Reservation</h2> *@
-
-@* @if (!ViewData.ModelState.IsValid) *@
-@* { *@
-@*     <div class="alert alert-danger"> *@
-@*         @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors)) *@
-@*         { *@
-@*             <p>@error.ErrorMessage</p> *@
-@*         } *@
-@*     </div> *@
-@* } *@
-
-@* <form asp-action="EditReservation" method="post"> *@
-@*     <input type="hidden" asp-for="ReservationID" /> *@
-
-@*     <div class="form-group"> *@
-@*         <label asp-for="CustomerID">Customer ID</label> *@
-@*         <input asp-for="CustomerID" class="form-control" required /> *@
-@*         <span asp-validation-for="CustomerID" class="text-danger"></span> *@
-@*     </div> *@
-
-@*     <div class="form-group"> *@
-@*         <label asp-for="ReservationTime">Reservation Time</label> *@
-@*         <input asp-for="ReservationTime" type="datetime-local" class="form-control" required /> *@
-@*         <span asp-validation-for="ReservationTime" class="text-danger"></span> *@
-@*     </div> *@
-
-@*     <div class="form-group"> *@
-@*         <label asp-for="NumberOfGuests">Number of Guests</label> *@
-@*         <input asp-for="NumberOfGuests" type="number" min="1" class="form-control" required /> *@
-@*         <span asp-validation-for="NumberOfGuests" class="text-danger"></span> *@
-@*     </div> *@
-
-@*     <div class="form-group"> *@
-@*         <label asp-for="IsIndoor">Location</label> *@
-@*         <select asp-for="IsIndoor" class="form-control"> *@
-@*             <option value="true">Indoor</option> *@
-@*             <option value="false">Outdoor</option> *@
-@*         </select> *@
-@*         <span asp-validation-for="IsIndoor" class="text-danger"></span> *@
-@*     </div> *@
-
-@*     <div class="form-group"> *@
-@*         <label asp-for="Status">Status</label> *@
-@*         <select asp-for="Status" class="form-control"> *@
-@*             <option value="Confirmed">Confirmed</option> *@
-@*             <option value="Pending">Pending</option> *@
-@*         </select> *@
-@*         <span asp-validation-for="Status" class="text-danger"></span> *@
-@*     </div> *@
-
-@*     <input type="hidden" asp-for="TableID" /> *@
-@*     <input type="hidden" asp-for="BranchID" value="1" /> <!-- Adjust as needed --> *@
-
-@*     <button type="submit" class="btn btn-primary mt-3">Update Reservation</button> *@
-@*     <a asp-action="ShowAllReservations" class="btn btn-secondary mt-3">Cancel</a> *@
-@* </form> *@
-
-@* @section Scripts { *@
-@*     <partial name="_ValidationScriptsPartial" /> *@
-@* } *@
-
-
-
-@* @model Final_Project.ViewModels.MakeReservation *@
-@* @{ *@
-@*     ViewData["Title"] = "Edit Reservation"; *@
-@* } *@
-
-@* <div class="row mb-4"> *@
-@*     <div class="col"> *@
-@*         <h2>Edit Reservation</h2> *@
-@*         <nav aria-label="breadcrumb"> *@
-@*             <ol class="breadcrumb"> *@
-@*                 <li class="breadcrumb-item"><a href="@Url.Action("ShowAllReservations")">All Reservations</a></li> *@
-@*                 <li class="breadcrumb-item"><a href="@Url.Action("Details", new { id = Model.ReservationID })">Details</a></li> *@
-@*                 <li class="breadcrumb-item active" aria-current="page">Edit</li> *@
-@*             </ol> *@
-@*         </nav> *@
-@*     </div> *@
-@* </div> *@
-
-@* @if (!ViewData.ModelState.IsValid) *@
-@* { *@
-@*     <div class="alert alert-danger alert-dismissible fade show" role="alert"> *@
-@*         <h4 class="alert-heading">Error</h4> *@
-@*         @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors)) *@
-@*         { *@
-@*             <p>@error.ErrorMessage</p> *@
-@*         } *@
-@*         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> *@
-@*     </div> *@
-@* } *@
-
-@* @if (TempData["SuccessMessage"] != null) *@
-@* { *@
-@*     <div class="alert alert-success alert-dismissible fade show" role="alert"> *@
-@*         @TempData["SuccessMessage"] *@
-@*         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> *@
-@*     </div> *@
-@* } *@
-
-@* <div class="row"> *@
-@*     <div class="col-12 col-md-8 col-lg-6"> *@
-@*         <div class="card shadow-sm"> *@
-@*             <div class="card-body"> *@
-@*                 <form asp-action="EditReservation" method="post"> *@
-@*                     <input type="hidden" asp-for="ReservationID" /> *@
-@*                     <input type="hidden" asp-for="TableID" /> *@
-
-@*                     <div class="mb-3"> *@
-@*                         <label asp-for="CustomerID" class="form-label">Customer ID</label> *@
-@*                         <input asp-for="CustomerID" class="form-control" required aria-describedby="customerIdHelp" /> *@
-@*                         <div id="customerIdHelp" class="form-text">Enter the customer ID.</div> *@
-@*                         <span asp-validation-for="CustomerID" class="text-danger"></span> *@
-@*                     </div> *@
-
-@*                     <div class="mb-3"> *@
-@*                         <label asp-for="ReservationTime" class="form-label">Reservation Time</label> *@
-@*                         <input asp-for="ReservationTime" type="datetime-local" class="form-control" required aria-describedby="reservationTimeHelp" /> *@
-@*                         <div id="reservationTimeHelp" class="form-text">Select the date and time for the reservation.</div> *@
-@*                         <span asp-validation-for="ReservationTime" class="text-danger"></span> *@
-@*                     </div> *@
-
-@*                     <div class="mb-3"> *@
-@*                         <label asp-for="NumberOfGuests" class="form-label">Number of Guests</label> *@
-@*                         <input asp-for="NumberOfGuests" type="number" min="1" class="form-control" required aria-describedby="numberOfGuestsHelp" /> *@
-@*                         <div id="numberOfGuestsHelp" class="form-text">Enter the number of guests (minimum 1).</div> *@
-@*                         <span asp-validation-for="NumberOfGuests" class="text-danger"></span> *@
-@*                     </div> *@
-
-@*                     <div class="mb-3"> *@
-@*                         <label asp-for="IsIndoor" class="form-label">Location</label> *@
-@*                         <select asp-for="IsIndoor" class="form-select" aria-describedby="locationHelp"> *@
-@*                             <option value="true">Indoor</option> *@
-@*                             <option value="false">Outdoor</option> *@
-@*                         </select> *@
-@*                         <div id="locationHelp" class="form-text">Choose the seating location.</div> *@
-@*                         <span asp-validation-for="IsIndoor" class="text-danger"></span> *@
-@*                     </div> *@
-
-@*                     <div class="mb-3"> *@
-@*                         <label asp-for="Status" class="form-label">Status</label> *@
-@*                         <select asp-for="Status" class="form-select" aria-describedby="statusHelp"> *@
-@*                             <option value="Confirmed">Confirmed</option> *@
-@*                             <option value="Pending">Pending</option> *@
-@*                         </select> *@
-@*                         <div id="statusHelp" class="form-text">Select the reservation status.</div> *@
-@*                         <span asp-validation-for="Status" class="text-danger"></span> *@
-@*                     </div> *@
-
-@*                     <div class="mb-3"> *@
-@*                         <label asp-for="BranchID" class="form-label">Branch</label> *@
-@*                         <select asp-for="BranchID" class="form-select" asp-items="@(new SelectList(ViewBag.Branches, "BranchID", "Name"))" aria-describedby="branchHelp"></select> *@
-@*                         <div id="branchHelp" class="form-text">Select the branch for this reservation.</div> *@
-@*                         <span asp-validation-for="BranchID" class="text-danger"></span> *@
-@*                     </div> *@
-
-@*                     <div class="d-flex gap-2"> *@
-@*                         <button type="submit" class="btn btn-primary" aria-label="Update reservation">Update Reservation</button> *@
-@*                         <a asp-action="ShowAllReservations" class="btn btn-secondary" aria-label="Cancel and return to all reservations">Cancel</a> *@
-@*                     </div> *@
-@*                 </form> *@
-@*             </div> *@
-@*         </div> *@
-@*     </div> *@
-@* </div> *@
-
-@* @section Scripts { *@
-@*     <partial name="_ValidationScriptsPartial" /> *@
-@* } *@
-
-@model Final_Project.ViewModels.MakeReservation
+﻿@model Final_Project.ViewModels.MakeReservation
 
 @{
     ViewData["Title"] = "Edit Reservation";
-    // Layout = null; Explicitly remove default layout to exclude the sidebar
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Restaurant Reservation</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <style>
-        /* Page background with restaurant image */
-        body {
-            background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1920&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            font-family: 'Georgia', serif; /* Elegant serif font */
-        }
+<div class="edit-reservation-page">
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2 class="page-title">
+                            <i class="fas fa-edit"></i>
+                            Edit Reservation
+                        </h2>
+                        <p class="subtitle">Modify your dining reservation details</p>
+                    </div>
 
-            /* Subtle overlay for twilight glow effect */
-            body::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%); /* Gradient overlay */
-                z-index: 1;
-            }
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <h6 class="alert-heading mb-2">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Please correct the following errors:
+                            </h6>
+                            <ul class="mb-0">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
+                    }
 
-        /* Enhanced form container with gradient and shadow */
-        .form-container {
-            background: linear-gradient(135deg, #ffffff 0%, #f9f1e7 100%); /* Soft ivory gradient */
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            max-width: 650px;
-            width: 100%;
-            position: relative;
-            z-index: 2;
-            margin: 2rem;
-            border: 2px solid #d4a373; /* Warm gold border */
-            overflow: hidden;
-        }
+                    <form asp-action="EditReservation" method="post">
+                        <input type="hidden" asp-for="ReservationID" />
+                        <input type="hidden" asp-for="TableID" />
 
-            /* Yellow zigzag border effect with refinement */
-            .form-container::before {
-                content: '';
-                position: absolute;
-                top: -15px;
-                left: -15px;
-                right: -15px;
-                height: 30px;
-                background: linear-gradient(45deg, #d4a373 25%, transparent 25%, transparent 50%, #d4a373 50%, #d4a373 75%, transparent 75%, transparent);
-                background-size: 40px 40px;
-                z-index: 3;
-            }
+                        <div class="form-group mb-3">
+                            <label asp-for="CustomerID" class="form-label">
+                                <i class="fas fa-user"></i> Customer ID
+                            </label>
+                            <input asp-for="CustomerID" class="form-control" required />
+                            <span asp-validation-for="CustomerID" class="text-danger small"></span>
+                        </div>
 
-            .form-container::after {
-                content: '';
-                position: absolute;
-                bottom: -15px;
-                left: -15px;
-                right: -15px;
-                height: 30px;
-                background: linear-gradient(45deg, #d4a373 25%, transparent 25%, transparent 50%, #d4a373 50%, #d4a373 75%, transparent 75%, transparent);
-                background-size: 40px 40px;
-                z-index: 3;
-            }
+                        <div class="form-group mb-3">
+                            <label asp-for="ReservationTime" class="form-label">
+                                <i class="fas fa-calendar-alt"></i> Reservation Time
+                            </label>
+                            <input asp-for="ReservationTime" type="datetime-local" class="form-control" required />
+                            <span asp-validation-for="ReservationTime" class="text-danger small"></span>
+                        </div>
 
-        /* Enhanced form title */
-        h2 {
-            color: #2f4f4f; /* Dark slate gray for elegance */
-            text-align: center;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-        }
+                        <div class="form-group mb-3">
+                            <label asp-for="NumberOfGuests" class="form-label">
+                                <i class="fas fa-users"></i> Number of Guests
+                            </label>
+                            <input asp-for="NumberOfGuests" type="number" min="1" max="20" class="form-control" required />
+                            <span asp-validation-for="NumberOfGuests" class="text-danger small"></span>
+                        </div>
 
-            h2::after {
-                content: '';
-                position: absolute;
-                bottom: -10px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 50px;
-                height: 3px;
-                background: #d4a373;
-            }
+                        <div class="form-group mb-3">
+                            <label asp-for="IsIndoor" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> Location Preference
+                            </label>
+                            <select asp-for="IsIndoor" class="form-select">
+                                <option value="true">🏠 Indoor Dining</option>
+                                <option value="false">🌿 Outdoor Dining</option>
+                            </select>
+                            <span asp-validation-for="IsIndoor" class="text-danger small"></span>
+                        </div>
 
-        /* Form group styling */
-        .form-group {
-            margin-bottom: 2rem;
-            position: relative;
-        }
+                        <div class="form-group mb-4">
+                            <label asp-for="Status" class="form-label">
+                                <i class="fas fa-flag"></i> Reservation Status
+                            </label>
+                            <select asp-for="Status" class="form-select status-select">
+                                <option value="Confirmed">✅ Confirmed</option>
+                                <option value="Pending">⏳ Pending</option>
+                                <option value="Cancelled">❌ Cancelled</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
 
-        label {
-            font-weight: 600;
-            color: #2f4f4f;
-            margin-bottom: 0.5rem;
-            display: block;
-            font-size: 1.1rem;
-        }
-
-        .form-control {
-            border: 2px solid #d4a373; /* Gold border for inputs */
-            border-radius: 8px;
-            padding: 0.9rem 1.2rem;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.9); /* Slight transparency */
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-            .form-control:focus {
-                border-color: #8b4513; /* Darker gold on focus */
-                box-shadow: 0 0 8px rgba(212, 163, 115, 0.5);
-                outline: none;
-            }
-
-        select.form-control {
-            padding-right: 2.5rem; /* Extra space for dropdown arrow */
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%232f4f4f' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-        }
-
-        /* Button styling */
-        .btn-primary {
-            background: linear-gradient(135deg, #d4a373 0%, #8b4513 100%); /* Gradient button */
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: white;
-            text-transform: uppercase;
-            width: 100%;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4);
-            }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%); /* Gradient for Cancel button */
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: white;
-            text-transform: uppercase;
-            width: 100%;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-            .btn-secondary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(73, 80, 87, 0.4);
-            }
-
-        .text-danger {
-            color: #8b0000;
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
-        }
-
-        .alert-danger {
-            background-color: rgba(139, 0, 0, 0.1);
-            border-left: 4px solid #8b0000;
-            border-radius: 5px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Button container for Update and Cancel */
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <h2>Edit Reservation</h2>
-
-        @* @if (!ViewData.ModelState.IsValid) *@
-        @* { *@
-        @*     <div class="alert alert-danger"> *@
-        @*         @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors)) *@
-        @*         { *@
-        @*             <p>@error.ErrorMessage</p> *@
-        @*         } *@
-        @*     </div> *@
-        @* } *@
-
-        <form asp-action="EditReservation" method="post">
-            <input type="hidden" asp-for="ReservationID" />
-
-            <div class="form-group">
-                <label asp-for="CustomerID">Customer ID</label>
-                <input asp-for="CustomerID" class="form-control" required />
-                <span asp-validation-for="CustomerID" class="text-danger"></span>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Update Reservation
+                            </button>
+                            <a asp-action="ShowAllReservations" class="btn btn-outline-light">
+                                <i class="fas fa-times"></i> Cancel Changes
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label asp-for="ReservationTime">Reservation Time</label>
-                <input asp-for="ReservationTime" type="datetime-local" class="form-control" required />
-                <span asp-validation-for="ReservationTime" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="NumberOfGuests">Number of Guests</label>
-                <input asp-for="NumberOfGuests" type="number" min="1" class="form-control" required />
-                <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="IsIndoor">Location</label>
-                <select asp-for="IsIndoor" class="form-control">
-                    <option value="true">Indoor</option>
-                    <option value="false">Outdoor</option>
-                </select>
-                <span asp-validation-for="IsIndoor" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Status">Status</label>
-                <select asp-for="Status" class="form-control">
-                    <option value="Confirmed">Confirmed</option>
-                    <option value="Pending">Pending</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-
-            <input type="hidden" asp-for="TableID" />
-            
-
-            <div class="button-group">
-                <button type="submit" class="btn btn-primary">Update Reservation</button>
-                @* <a asp-action="ShowAllReservations" class="btn btn-secondary">Cancel</a> *@
-            </div>
-        </form>
+        </div>
     </div>
+</div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-</body>
-</html>
+    <script>
+        $(document).ready(function () {
+            // Set minimum date to today for new reservations
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = (now.getMonth() + 1).toString().padStart(2, '0');
+            var day = now.getDate().toString().padStart(2, '0');
+            var hours = now.getHours().toString().padStart(2, '0');
+            var minutes = now.getMinutes().toString().padStart(2, '0');
+
+            var minDateTime = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+            $('#ReservationTime').attr('min', minDateTime);
+        });
+    </script>
+}
+
+<style>
+    .edit-reservation-page {
+        min-height: 100vh;
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1920&auto=format&fit=crop') center/cover;
+        position: relative;
+        padding: 2rem 0;
+    }
+
+        .edit-reservation-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(230, 126, 34, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+    .form-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 3rem 2.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    keyframes slideUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .form-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #e67e22, #f39c12, #d35400, #e74c3c);
+        background-size: 200% 100%;
+        animation: shimmer 3s ease-in-out infinite;
+    }
+
+    keyframes shimmer {
+        0%, 100%
+
+    {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+        .page-title i {
+            margin-right: 0.5rem;
+            color: #e67e22;
+            -webkit-text-fill-color: #e67e22;
+        }
+
+    .subtitle {
+        color: #6c757d;
+        font-size: 1.1rem;
+        font-style: italic;
+        margin: 0;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+    }
+
+        .form-label i {
+            margin-right: 0.5rem;
+            color: #e67e22;
+            width: 16px;
+        }
+
+    .form-control,
+    .form-select {
+        border: 2px solid rgba(108, 117, 125, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #e67e22;
+            box-shadow: 0 0 0 0.25rem rgba(230, 126, 34, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+
+        .form-control:hover,
+        .form-select:hover {
+            border-color: rgba(230, 126, 34, 0.5);
+            transform: translateY(-1px);
+        }
+
+    .status-select {
+        position: relative;
+    }
+
+        .status-select option[value="Confirmed"] {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.1));
+        }
+
+        .status-select option[value="Pending"] {
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.1), rgba(243, 156, 18, 0.1));
+        }
+
+        .status-select option[value="Cancelled"] {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.1));
+        }
+
+    .form-actions {
+        display: grid;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        border-radius: 12px;
+        font-weight: 600;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+        border: none;
+        color: white;
+        box-shadow: 0 6px 20px rgba(230, 126, 34, 0.4);
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #d35400 0%, #c0392b 100%);
+            box-shadow: 0 12px 30px rgba(230, 126, 34, 0.6);
+        }
+
+    .btn-outline-light {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: #2c3e50;
+        backdrop-filter: blur(5px);
+    }
+
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+        }
+
+    .alert-danger {
+        border-radius: 12px;
+        border: none;
+        background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
+        border-left: 4px solid #e74c3c;
+        backdrop-filter: blur(5px);
+        animation: slideDown 0.3s ease-out;
+    }
+
+    keyframes slideDown {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .alert-heading {
+        color: #c0392b;
+        font-weight: 600;
+    }
+
+    .text-danger {
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    /* Responsive adjustments */
+    (max-width: 768px) {
+        .edit-reservation-page
+
+    {
+        padding: 1rem 0;
+    }
+
+    .form-container {
+        padding: 2rem 1.5rem;
+        margin: 0 1rem;
+        border-radius: 16px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    }
+
+    (max-width: 576px) {
+        .form-container
+
+    {
+        margin: 0 0.5rem;
+        padding: 1.5rem 1rem;
+    }
+
+    .page-title {
+        font-size: 1.6rem;
+    }
+
+    }
+</style>

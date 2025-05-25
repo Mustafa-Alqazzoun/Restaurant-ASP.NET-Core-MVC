@@ -44,9 +44,14 @@
     }
 
     <form asp-action="Create" asp-controller="CustomizeOrder" method="post" class="bg-[#fff8f0] shadow-lg rounded-lg p-6 border border-[#d6b89f]" id="order-form">
+        @Html.AntiForgeryToken() <!-- Added anti-forgery token -->
         <div class="mb-6">
             <label class="block text-lg font-medium text-gray-700 mb-2">Customer: @Model.Customer.Name</label>
             <input type="hidden" asp-for="Customer.CustomerID" />
+            <input type="hidden" asp-for="Customer.Name" />
+            <input type="hidden" asp-for="CustomerID" />
+            <input type="hidden" asp-for="CustomerName" value="@Model.Customer.Name" />
+            <input type="hidden" asp-for="TableID" value="T001" /> <!-- Default table ID -->
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -86,6 +91,8 @@
                                 <span class="font-medium">@unit.Name</span>
                                 <span class="text-gray-500 ml-2">($@unit.Price.ToString("F2"))</span>
                             </label>
+                            <!-- Hidden input for SelectedUnitIds -->
+                            <input type="hidden" name="SelectedUnitIds" id="selected-unit-@unit.Id" value="@unit.Id" disabled />
                         </div>
                     }
                 </div>
@@ -193,7 +200,6 @@
             animation: plateSpin 0.8s ease-in-out;
         }
 
-        /* Hide number input spinners */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -204,14 +210,12 @@
             -moz-appearance: textfield;
         }
 
-        /* Ensure body doesn't hide content */
         body {
             margin: 0;
             padding: 0;
             overflow-x: hidden;
         }
 
-        /* Mobile-specific styles */
         @@media (max-width: 640px) {
             .container {
                 padding-left: 1rem;
@@ -233,23 +237,20 @@
         }
     </style>
     <script>
-        let previousItemCount = 0; // Track previous number of selected items
-        let lastScrollTop = 0; // Track last scroll position
+        let previousItemCount = 0;
+        let lastScrollTop = 0;
 
         // Header hide/show on scroll
         window.addEventListener('scroll', () => {
             try {
                 const header = document.getElementById('site-header');
                 const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
                 if (currentScrollTop > lastScrollTop) {
-                    // Scrolling down: hide header
                     header.style.transform = 'translateY(-100%)';
                 } else {
-                    // Scrolling up: show header
                     header.style.transform = 'translateY(0)';
                 }
-                lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // Prevent negative scroll
+                lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
             } catch (error) {
                 console.error('Error in scroll handler:', error);
             }
@@ -269,7 +270,10 @@
 
                 inputs.forEach(input => {
                     const quantity = parseInt(input.value) || 0;
+                    const unitId = input.id.replace('unit-', '');
+                    const hiddenInput = document.getElementById(`selected-unit-${unitId}`);
                     if (quantity > 0) {
+                        hiddenInput.disabled = false;
                         const name = input.getAttribute('data-name');
                         const price = parseFloat(input.getAttribute('data-price'));
                         const image = input.getAttribute('data-image');
@@ -287,13 +291,20 @@
                             <span class="text-gray-500">$${itemTotalPrice.toFixed(2)}</span>
                         `;
                         selectedItemsList.appendChild(listItem);
+                    } else {
+                        hiddenInput.disabled = true;
                     }
                 });
 
                 totalPriceElement.textContent = totalPrice.toFixed(2);
                 submitButton.disabled = totalItems === 0;
 
-                // Check if a new item or quantity was added
+                // Update modal items
+                const modalItems = document.getElementById('modal-items');
+                const modalTotal = document.getElementById('modal-total');
+                modalItems.innerHTML = selectedItemsList.innerHTML;
+                modalTotal.textContent = totalPrice.toFixed(2);
+
                 const currentItemCount = totalItems;
                 if (currentItemCount > previousItemCount && currentItemCount > 0) {
                     plateContainer.classList.add('animate-plate-pulse');
@@ -366,7 +377,6 @@
             }
         }
 
-        // Add loading state to Confirm button and toast notification
         document.getElementById('confirm-submit').addEventListener('click', () => {
             try {
                 const confirmButton = document.getElementById('confirm-submit');
@@ -377,7 +387,6 @@
                 loadingSpinner.classList.remove('hidden');
                 confirmButton.disabled = true;
 
-                // Simulate form submission with toast notification
                 setTimeout(() => {
                     const toast = document.createElement('div');
                     toast.id = 'toast';
